@@ -1,0 +1,334 @@
+Наследование и полиморфизм
+    
+    Парадигма ООП
+
+    Наследование
+
+        Наследование — механизм объектно-ориентированного программирования (наряду с
+        инкапсуляцией, полиморфизмом и абстракцией), позволяющий описать новый класс на
+        основе уже существующего (родительского), при этом свойства и функциональность
+        родительского класса заимствуются новым классом.
+        Наслідування - це передача відкритого і захисного стану чи поведінки від одного класу до іншого  
+
+            public class BaseClass
+            {
+                public string publicField = "Base class public";
+                private string privateField = "Base class private";
+                protected string protectedField = "Base class protected";
+            }
+            public class DericedClass : BaseClass
+            {
+                public DericedClass()
+                {
+                    publicField = "Derived class public";
+                    protectedField = "Derived class protected";
+                }
+            }
+            static void Main(string[] args)
+            {
+                DericedClass instance = new DericedClass();
+
+                WriteLine(instance.publicField);
+            }
+
+        Обзор и применение модификаторов доступа
+            Модификаторы доступа
+                
+                Модификаторы доступа – это ключевые слова, задающие доступность члена или типа. При
+                помощи модификаторов доступа можно задавать уровни доступа к членам.
+            
+                public - доступ к типу или члену возможен из любого другого кода в той же
+                    сборке или другой сборке, ссылающейся на него.
+                protected - доступ к типу или элементу можно получить только из кода в том
+                    же классе или структуре, либо в производном классе.
+                private - доступ к типу или члену можно получить только из кода в том же
+                    классе или структуре.
+    
+
+    Вызов конструктора базового класса
+
+        Опис: Проблема цього варіанта в тому що в BaseClass конструкторі проініціалізує поля а потім ще раз
+            цим полям присвої значення. 
+        public class BaseClass
+        {
+            public int baseNumber;
+            public BaseClass() { }
+            public BaseClass(int baseNumber)
+            {
+                this.baseNumber = baseNumber;
+            }
+        }
+        public class DerivedClass : BaseClass
+        {
+            public int derivedField;
+            public DerivedClass(int number1, int number2)
+            {
+                baseNumber = number1;
+                derivedField = number2;
+            }
+        }
+        static void Main(string[] args)
+        {
+            DerivedClass instance = new DerivedClass(1,2);
+
+            WriteLine(instance.baseNumber);
+            WriteLine(instance.derivedField);
+        }
+
+        Варіант виправлення:
+
+        Использование ключевого слово base для вызова конструктора базового класса.
+
+            public class BaseClass
+            {
+                public int baseNumber;
+
+                public BaseClass()
+                {
+
+                }
+
+                public BaseClass(int baseNumber)
+                {
+                    this.baseNumber = baseNumber;
+                }
+
+            }
+            public class DerivedClass : BaseClass
+            {
+                public int derivedField;
+                public DerivedClass(int number1, int number2) : base(number1)
+                {
+                    derivedField = number2;
+                }
+            }
+            static voi  d Main(string[] args)
+            {
+                DerivedClass instance = new DerivedClass(1,2);
+
+                WriteLine(instance.baseNumber);
+                WriteLine(instance.derivedField);
+            }
+
+    Приведение к базовому типу
+
+        Приведение к базовому типу используется для сокрытия реализации членов
+        производного класса.
+
+            BaseClass instance = new DerivedClass();
+
+        Переменная instance типа BaseClass хранит ссылку на экземпляр класса DerivedClass.     
+
+            public class BaseClass
+            {
+                public int field1;
+                public int field2;
+                public int field3;
+            }
+            public class DerivedClass : BaseClass
+            {
+                public int field4;
+                public int field5;
+            }
+            static void Main(string[] args)
+            {
+                DerivedClass instance = new DerivedClass();
+
+                instance.field1 = 1;
+                instance.field2 = 2;
+                instance.field3 = 3;
+                instance.field4 = 4;
+                instance.field5 = 5;
+
+                BaseClass newInstance = (BaseClass)instance;
+
+                WriteLine(newInstance.field1);
+                WriteLine(newInstance.field2);
+                WriteLine(newInstance.field3);
+
+                WriteLine("instance id     :{0}", instance.GetHashCode()); 
+                WriteLine("new instance id :{0}", newInstance.GetHashCode()); 
+
+                ReadKey();
+            }
+
+    UpCast и DownCast
+
+        UpCast - приведение экземпляра производного класса к базовому типу.
+            BaseClass up = new DerivedClass();
+        DownCast - приведение экземпляра базового типа к производному типу. 
+            DerivedClass down = (DerivedClass) up;
+        
+        !!! DownCast невозможен без предварительного UpCast. 
+            
+            // Замещение метода базового класса
+
+            public class BaseClass
+            {
+                public void Method()
+                {
+                    WriteLine("Method from BaseClass");
+                }
+            }
+            public class DerivedClass : BaseClass
+            {
+                public void Method()
+                {
+                    WriteLine("Method from DerivedClass");
+                }
+            }
+            static void Main(string[] args)
+            {
+                DerivedClass instance = new DerivedClass();
+                instance.Method(); //Method from DerivedClass
+
+                BaseClass instanceUp = instance;
+                instanceUp.Method(); //Method from BaseClass
+
+                DerivedClass instanceDown = (DerivedClass)instance;
+                instanceDown.Method(); //Method from DerivedClass
+
+                ReadKey();
+            }
+
+    Полиморфизм — возможность объектов с одинаковой спецификацией иметь
+    различную реализацию.
+        Формы полиморфизма:
+            1. Ad-hoc полиморфизм
+            2. Классический (принудительный) полиморфизм:
+                • использование виртуальных членов (переопределение virtual / override).
+                • приведение типов
+        
+        !!! В случае одновременного использования двух форм классического
+            полиморфизма, первая форма нейтрализует вторую (доминирует над второй).
+        
+        public class BaseClass
+        {
+            public virtual void Method()
+            {
+                WriteLine("Method from BaseClass");
+            }
+        }
+        public class DerivedClass : BaseClass
+        {
+            public override void Method()
+            {
+                WriteLine("Method from DerivedClass");
+            }
+        }
+        static void Main(string[] args)
+        {
+            DerivedClass instance = new DerivedClass();
+            instance.Method(); //Method from DerivedClass
+
+            BaseClass instanceUp = instance;
+            instanceUp.Method(); //Method from DerivedClass
+
+            DerivedClass instanceDown = (DerivedClass)instance;
+            instanceDown.Method(); //Method from DerivedClass
+
+            ReadKey();
+        }
+
+    Визов метода базового конструктора: base.Methof(); 
+
+    public class BaseClass
+        {
+            public virtual void Method()
+            {
+                WriteLine("Method from BaseClass");
+            }
+        }
+        public class DerivedClass : BaseClass
+        {
+            public override void Method()
+            {
+                base.Method();
+                WriteLine("Method from DerivedClass");
+            }
+        }
+        static void Main(string[] args)
+        {
+            DerivedClass instance = new DerivedClass();
+            instance.Method();
+            //Method from BaseClass
+            //Method from DerivedClass
+            ReadKey();
+        }
+
+    Оператори Is і As
+        is and as
+            class ClassA { }
+            class ClassB : ClassA { }
+
+            static void Main(string[] args)
+            {
+                ClassB b = new ClassB();
+                ClassA a = null;
+
+                // Якщо b є наслідником від ClassA тоді превести його до базового типу ClassA
+                if (b is ClassA)
+                    a = (ClassA)b;
+                else
+                    a = null;
+
+                // Аналогічно конструкції вище
+                // Якщо b можлтво привести до ClassA то b приводиться до того типу якщо не можли то в перемінну а повернеться null
+                a = b as ClassA;
+
+            }
+        as
+            public class BaseClass
+            {
+                public virtual void Method()
+                {
+                    WriteLine("Method from BaseClass");
+                }
+            }
+            public class DerivedClass : BaseClass
+            {
+                public override void Method()
+                {
+                    WriteLine("Method from DerivedClass");
+                }
+            }
+            static void Main(string[] args)
+            {
+                DerivedClass instance = new DerivedClass();
+                instance.Method();
+
+                BaseClass instanceUp = instance as BaseClass;
+                instanceUp.Method(); 
+
+                DerivedClass instanceDown = instanceUp as DerivedClass;
+                instanceDown.Method(); 
+
+                ReadKey();
+            }
+    
+    Модификатор sealed
+
+    При применении к классу, модификатор sealed запрещает другим
+    классам наследоваться от этого класса.
+
+    Модификатор sealed можно использовать с методами или свойствами.
+    Это позволяет запретить переопределять виртуальные методы или
+    свойства в производных классах. 
+
+        sealed class SealedClass
+        {
+            public int x;
+            public int y;
+        }
+        class DerivedClass // : SealedClass // Error
+        { }
+        static void Main(string[] args)
+        {
+            SealedClass instance = new SealedClass();
+            instance.x = 100;
+            instance.y = 200;
+
+            WriteLine($"x = {instance.x} y = {instance.y}");
+
+            ReadKey();
+        }

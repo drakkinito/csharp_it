@@ -1,0 +1,77 @@
+Частичные классы - Partial classes
+
+    В C# реализована возможность разделить создание класса или метода (структуры, интерфейса)
+    между двумя или более исходными файлами или модулями. Каждый исходный файл содержит
+    определение типа или метода, и все части объединяются при компиляции приложения.
+
+    Для разделения класса на несколько частей, используется ключевое слово partial.
+
+        partial class PartialClass
+        {
+            internal void MethodPart1()
+            {
+                WriteLine("Part1");
+            }
+        }
+        partial class PartialClass
+        {
+            internal void MethodPart2()
+            {
+                WriteLine("Part2");
+            }
+        }
+        static void Main(string[] args)
+        {
+            PartialClass instance = new PartialClass();
+
+            instance.MethodPart1();
+            instance.MethodPart2();
+        }
+
+    Частичные методы - это методы, где «прототип» или сигнатура метода
+    определена при создании частичного класса, а реализация выполняется в любой
+    другой (только одной) части этого класса.
+
+        partial class PartialClass
+        {
+            partial void MethodPart1();
+            partial void MyMethod();
+        }
+        partial class PartialClass
+        {
+            partial void MethodPart1()
+            {
+                WriteLine("Hello Console");
+            }
+            public void CallPartialMethod()
+            {
+                MethodPart1();
+
+                MyMethod();
+            }
+        }
+        static void Main(string[] args)
+        {
+            PartialClass instance = new PartialClass();
+    
+            instance.CallPartialMethod();
+        }
+    Правила использования
+        Частичные методы
+        • Частичные методы должны быть определенны только в частичных классах.
+        • Частичные методы должны быть помечены ключевым словом partial.
+        • Частичные методы всегда являются private, попытка явного использования
+            с ними модификатора доступа приведет к ошибке.
+        • Частичные методы должны возвращать void.
+        • Частичные методы могут быть нереализованными.
+        • Частичные методы могут не иметь аргументов.
+
+    readonly - Поля только для чтения
+
+        Если поле используется с модификатором readonly, то присвоение значений
+        таким полям может происходить только при создании поля или в конструкторе
+        того же класса.
+
+            public readonly string field = "Hello!";
+
+        !!! readonly — это модификатор, который можно использовать только для полей
